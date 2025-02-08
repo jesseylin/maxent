@@ -1,0 +1,201 @@
+% Created 2025-02-13 Thu 13:49
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{physics}
+\usepackage[per-mode=fraction]{siunitx}
+\usepackage[margin=1.25in]{geometry}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+%% ox-latex features:
+%   !announce-start, !guess-pollyglossia, !guess-babel, !guess-inputenc, maths,
+%   !announce-end.
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+%% end ox-latex features
+
+
+\author{Jesse Young Lin}
+\date{\today}
+\title{Inverse Statistical Mechanics Notes}
+\hypersetup{
+ pdfauthor={Jesse Young Lin},
+ pdftitle={Inverse Statistical Mechanics Notes},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 29.4 (Org mode 9.8-pre)},
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Bayesian statistics}
+\label{sec:org2d08a5f}
+\subsection{The question of Bayesian inference and maximum likelihood estimation}
+\label{sec:orgb8a937f}
+The core question is, given high-dimensional data, i.e., \(\{x_{i}\}\) with each
+\(x_{i} \in \mathbb{R}^{d}\) and \(d\) very large, how does one fit a
+probability distribution \(\rho(\{x_{i}\})\) over the data set which ``respects''
+its statistics?
+
+In general, this is the question answered by \textbf{Bayesian inference}. A common
+paradigm is \textbf{maximum likelihood estimation}. Here, one considers a probablity
+distribution \(\rho\) which is parameterized by variables \(\{\theta_{j}\}\)
+with allowable values in the sets \(\{\Theta_{j}\}\).
+Then, the \textbf{likelihood function} \(\rho( \{x_{i}\} \mid \{\theta_{j}\})\) is
+defined over the data. Its interpretation is as a conditional probability: what
+is the probability of observing my dataset \(\{x_{i}\}\) given specific values
+of the unknown fit parameters \(\{\theta_{j}\}\)? Maximum likelihood estimation
+is a way of estimating the \(\{\theta_{j}\}\) by assuming that they take on the
+values which maximize the likelihood, i.e.,
+\begin{align*}
+\theta_{j} = \argmax_{\theta_{j} \in \Theta_{j}} \rho(\{x_{i}\} \mid \{\theta_{j}\}).
+\end{align*}
+\subsection{Maximum entropy inference}
+\label{sec:org3933dc8}
+We are using a specific technique for doing maximum likelihood estimatino called
+\textbf{maximum entropy inference}. Essentially, we posit a maximum entropy assumption
+when defining our model distribution \(\rho\), which otherwise must be
+arbitrarily specified.
+
+For concreteness, consider the Ising model with random variables \(S_{i}\). If
+we denote a lattice configuration with size \(N \times N\) as a vector\footnote{Physically we imagine the \(N \times N\) lattice like a matrix, but
+mathematically for convenience we denote it as a vector of length \(N^{2}\). In
+computer science this is sometimes called ``flattening'' a matrix, and can be
+convenient when programming high-performance simulations because computer memory is
+linear and therefore matrices are all stored in flattened form. There are many
+ways to flatten a matrix, for example: for linear index \(k\), doing division
+gives integers \(q,r\) such that
+\begin{align*}
+k = qN + r.
+\end{align*}
+with \(0 \leq r < q\).
+Then the Cartesian index (i.e., \(x\)- and \(y\)-coordinates on the lattice) is \((q,r)\).}
+\begin{align*}
+\Lambda = (s_{1}, s_{2}, \ldots, s_{N \times N})
+\end{align*}
+i.e., we specify the values of each of the random variables as \(s_{i}\), then a
+dataset is a set of lattice configurations \(\{\Lambda^{j}\}_{j=1}^{M}\).
+Therefore, we use subscript index to denote the lattice position and superscript
+index to denote which sample in the dataset we refer to.
+
+Given such a dataset \(\{\Lambda^{j}\}_{j=1}^{M}\), we want to fit a probability model \(\rho\)
+which reproduces the first and second moments of the dataset.\footnote{Note that due to the symmetries of the Ising model, namely its spatial
+homogeneity (no spatial position is special) and isotropy (no spatial direction
+is special), many of these moments are actually the same. For example,
+\(\ev{S_{i}}\) is actually independent of the lattice position \(i\): this
+is the physical statement that the net magnetization is uniform across the
+lattice.}
+In other words, we want
+\begin{align}
+\label{eq:moments}
+\begin{split}
+\ev{S_{i}}_{\rho} &= \frac{1}{M}\sum_{k=1}^{M} s^{k}_{i} \\
+\ev{S_{i} S_{j}}_{\rho} &= \frac{1}{M}\sum_{k=1}^{M} s_{i}^{k}s^{k}_{j},
+\end{split}
+\end{align}
+where \(\ev{\cdot}_{\rho}\) denotes the expectation value with respect to the
+distribution \(\rho\).
+
+It turns out that matching the moments via \eqref{eq:moments} does not uniquely
+specify the probability distribution, but if we also add the constraint that the
+entropy is maximized, the unique probability distribution that satisfies
+\eqref{eq:moments} with maximal entropy is
+\begin{align}
+\label{eq:gibbs}
+\rho(\Lambda) = Z^{-1}e^{-\sum_{ij} J_{ij}s_{i}s_{j} -\sum_{k} h_{k}s_{k}}.
+\end{align}
+Defining the \textbf{partition function} as\footnote{I prefer writing the summation as over all possible configurations of the
+lattice \(\Lambda\). For the Ising model, which is a 2D lattice of binary spins,
+this is a summation over a Cartesian product \(\Lambda \in \{\pm 1\}^{N^{2}}\).}
+\begin{align*}
+Z = \sum_{\text{all possible } \Lambda} \rho(\Lambda),
+\end{align*}
+we note
+\begin{align*}
+\dv{\log Z}{J_{ij}} &= \ev{S_{i}S_{j}}_{\rho} \\
+\dv{\log Z}{h_{k}} &= \ev{S_{k}}_{\rho}.
+\end{align*}
+
+Therefore the condition \eqref{eq:moments} is equivalent to
+\begin{align*}
+\dv{\log Z}{J_{ij}} &= \frac{1}{M}\sum_{k=1}^{M} s^{k}_{i} \\
+\dv{\log Z}{h_{k}} &= \frac{1}{M}\sum_{k=1}^{M} s_{i}^{k}s^{k}_{j}.
+\end{align*}
+\section{Gradient descent and machine learning}
+\label{sec:orgcdbed62}
+Essentially all the success of machine learning is based on the fact that the
+gradient descent algorithm is very efficient to compute. Gradient descent
+amounts to defining a cost function \(\mathcal L(\theta)\) over a parameter
+\(\theta\), and then noting that if
+\begin{align}
+\label{eq:gradientdescent}
+\theta \leftarrow \theta - \alpha \pdv{\mathcal L}{\theta}.
+\end{align}
+where \(\alpha > 0\) is the dimensionless \textbf{step size}, then \(\theta\) will
+converge to a value where \(\pdv{\mathcal{L}}{\theta} = 0\). This corresponds to
+a local extremum, and the choice of minus sign in the algorithm
+\eqref{eq:gradientdescent} indicates that this should be a local minimum of
+\(\mathcal L\). If \(\mathcal{L}\) fulfills other conditions (for example, if it were
+a globally convex function of \(\theta\)), then this will also be a global minimum, but
+in general it does not fulfill these conditions and we are satisfied if we can
+even find local minima.
+\subsection{Regression on moments is maximum likelihood estimation}
+\label{sec:orgc454b43}
+Writing the distribution \eqref{eq:gibbs} as a likelihood function,
+\begin{align*}
+\rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\}) = Z^{-1}(\{J_{ij}\}, \{h_{k}\})
+e^{-\sum_{ij} J_{ij}s_{i}s_{j} -\sum_{k} h_{k}s_{k}}
+\end{align*}
+one can calculate
+\begin{align*}
+\pdv{\log \rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\})}{J_{ij}} &= \ev{S_{i}S_{j}}_{\rho} - s_{i}s_{j} \\
+\pdv{\log \rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\})}{h_{k}} &= \ev{S_{k}}_{\rho} - s_{k}
+\end{align*}
+which we saw on the board last time. Therefore, we can implement the following algorithm
+\begin{align}
+\label{eq:mledyn}
+\begin{split}
+J_{ij} \leftarrow J_{ij} + \alpha(\ev{S_{i}S_{j}}_{\rho} - s_{i}s_{j}) \\
+h_{k} \leftarrow h_{k} + \alpha(\ev{S_{k}}_{\rho} - s_{k})
+\end{split}
+\end{align}
+which is equivalent to gradient ascent on the function \(\log \rho\), i.e.,
+maximum likelihood estimation.
+\subsection{Assignment}
+\label{sec:org6072e23}
+You will create a dataset \(\{\Lambda^{k}\}\) of binary images (it can even be a
+single image). Then, code an algorithm which implements \eqref{eq:mledyn} for
+the Ising model, starting from randomly initialized parameters \(\{J_{ij},
+h_{k}\}\).
+
+Recall, for the Ising model that \(J_{ij}\) is zero unless
+sites \(i\) and \(j\) are adjacent on the lattice, and if so then \(J_{ij}\)
+equals a single constant \(\frac{J}{N}\). The code we are using does not have the term
+that depends on \(h_{k}\). You should add it into the code, with the same
+assumption that \(h_{k}\) is uniform across the lattice with
+\(h_{k} = \frac{h}{N^{2}}\). (Note: if you work out the sums in
+\eqref{eq:gibbs} you will see where the factors of \(N\) come from. This is not
+that important because you are fitting the values of \(h\) and \(J\) anyway.)
+
+Hints:
+\begin{itemize}
+\item The easiest dataset you could consider is just to pick a value of \(J\) and use the existing code to generate images for your \(\Lambda^{k}\). Then when you do maximum likelihood estimation, you should converge on the original value of \(J\) you chose. This is bona fide "inverse statistical mechanics".
+\item Alternatively, you can find your own images from the internet. You may need an image processing library like \url{https://pypi.org/project/pillow/}. Then, one needs to crop and subsample your images down to the resolution \(N \times N\) of the lattice, and also binarize them so they consist of pixels only of brightness value \(0\) or \(1\) (corresponding to the up and down spins of the Ising lattice).
+\item If you are using a dataset with more than a single image, it may be worth implementing the algorithm as follows:
+\begin{align*}
+J_{ij} \leftarrow J_{ij} + \alpha \qty(\ev{S_{i}S_{j}}_{\rho} - \frac{1}{M} \sum_{k} s^{k}_{i}s^{k}_{j}) \\
+h_{k} \leftarrow h_{k} + \alpha \qty(\ev{S_{k}}_{\rho} - \frac{1}{M} \sum_{\ell} s^{\ell}_{k}).
+\end{align*}
+
+This produces statistically equivalent results as \eqref{eq:mledyn} assuming all your data are "independent". As we discussed, it is not always straightforward to determine when real-world data should be considered independent from each other. Note that playing around with the value of the step size \(\alpha\) may be needed for best results.
+\end{itemize}
+\end{document}

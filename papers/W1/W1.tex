@@ -1,0 +1,254 @@
+% Created 2025-02-13 Thu 00:07
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{physics}
+\usepackage[per-mode=fraction]{siunitx}
+\usepackage[margin=1.25in]{geometry}
+
+%% ox-latex features:
+%   !announce-start, !guess-pollyglossia, !guess-babel, !guess-inputenc, maths,
+%   !announce-end.
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+%% end ox-latex features
+
+
+\author{Jesse Young Lin}
+\date{\today}
+\title{Markov Chain Monte Carlo Notes}
+\hypersetup{
+ pdfauthor={Jesse Young Lin},
+ pdftitle={Markov Chain Monte Carlo Notes},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 29.4 (Org mode 9.8-pre)},
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Preliminaries on Probability}
+\label{sec:org8ff29c6}
+Probability is extremely unintuitive for humans. Consequently,
+there is a variety of vocabulary and notation which is initially confusing but
+essential to understand. We will illustrate all the preliminaries with the
+example of a fair coin flip (which is formally known as a Bernoulli distributed
+random variable).
+\subsection{Probability distributions}
+\label{sec:org2dad992}
+A \textbf{random variable} is typically denoted with a capital letter, and its
+\textbf{realization} is often denoted with the lowercase letter. To model a series of
+coin flips, we consider a sequence of \(N\) random variables
+\(\{X_{i}\}_{i=0}^{N}\). Say we flip the \(i=0\) coin and see heads. Then, we
+say that \(x_{0} = H\).
+
+The \textbf{probability distribution} or \textbf{probability density function} of \(X_{0}\) is
+given by the Bernoulli distribution, which is a function \(\rho\)
+\begin{align*}
+\rho(x) = \begin{cases}
+1/2\qc{x = H} \\
+1/2\qc{x = T}
+\end{cases}.
+\end{align*}
+This communicates the intuitive fact that if we flip a fair coin a large number
+of times, we expect it to land on heads half the time and tails the other half.
+We note that \(\rho(x)\) is just a function over the set \(\{H,T\}\), its
+probabilistic meaning is given by the notation
+\begin{align*}
+\mathbb{P}(X_{0} = z) = \rho(z).
+\end{align*}
+We use the \(\mathbb{P}\) notation to describe the probability of particular
+realizations. For example, if \(z = H\), then the above equation says that the
+probability the random variable \(X_{0}\) has value \(H\) is given by the value
+of the function \(\rho(z)\) at \(z = H\), which is \(1/2\).
+\subsection{Conditional probability and (in)dependence of random variables}
+\label{sec:org982e7e5}
+In our sequence of coin flips, we have considered the first coin \(X_{0}\). What
+about the \(X_{1}\) variable? Now, we need to introduce the assumption that
+\(X_{1}\) is \textbf{independent} of \(X_{0}\). Intuitively, this means that the
+realization (i.e., the result of the coin flip) \(x_{1}\) does not depend on
+information from the realization \(x_{0}\). Formally, we write
+\begin{align}
+\label{eq:independence}
+\mathbb{P}(X_{1} | X_{0}) = \mathbb{P}(X_{1}).
+\end{align}
+The left-hand side of this equation is the \textbf{conditional probability}. It is read
+as the conditional probability of \(X_{1}\) conditioned on the realization of
+\(X_{0}\). In words, what is the probability which describes \(X_{1}\) given
+that we know the realization of \(X_{0}\)? As we are modelling a sequence of
+coin flips, we know that the probability distribution of the \(i=1\) should have
+nothing to do with whether the coin flip at \(i = 0\) was heads or tails, which
+is what \eqref{eq:independence} tells us. Finally, we have been assuming that all the
+\(X_{i}\) are identically distributed, i.e., they are all Bernoulli distributed,
+which tells us that
+\begin{align*}
+\mathbb{P}(X_{i} = z) = \rho(z)
+\end{align*}
+for any \(i\). Therefore we have our final model of a sequence of coin flips,
+which is given by the sequence \(\{X_{i}\}\) of independently and identically
+distributed random variables, all distributed according to the Bernoulli
+distribution.\footnote{We note also that independence is often defined via the following equation on
+the \textbf{joint probability}
+\begin{align*}
+\mathbb{P}(X_{1} = x\text{ and }X_{0} = y) = \mathbb{P}(X_{1} = x)\mathbb{P}(X_{0} = y).
+\end{align*}
+This is equivalent to \eqref{eq:independence} if we use \textbf{Bayes' theorem}, which
+is the following statement which always holds
+\begin{align*}
+\mathbb{P}(X_{1} = x \text{ and } X_{0} = y) = \mathbb{P}(X_{1} = x \mid X_{0} = y)\mathbb{P}(X_{0} = y).
+\end{align*}
+If we denote using \(A\) and \(B\) the realizations
+\begin{align*}
+A &= \{X_{1} = x\} \\
+B &= \{X_{0} = y\}
+\end{align*}
+and use the set theoretic notation for ``and'', we get the common expression
+\begin{align*}
+\mathbb{P}(A \cap B) = \mathbb{P}(A \mid B)\mathbb{P}(B).
+\end{align*}
+This equation says that the probability of events \(A\) and \(B\) occurring
+simultaneously is equal to the probability that \(B\) occurs multiplied by the
+probability that \(A\) occurs given that we know event \(B\) occurs (the
+conditional probability).}
+
+A simple example of dependent random variables is the following. Imagine an urn
+filled with one red ball and one black ball. Let \(Y_{i}\) be the random variable
+corresponding to the \(i\)-th draw from the urn. Now,
+\begin{align*}
+\mathbb{P}(Y_{1} = \text{red} \mid Y_{0} = \text{red}) &= 0 \\
+\mathbb{P}(Y_{1} = \text{black} \mid Y_{0} = \text{red}) &= 1,
+\end{align*}
+in other words if you first draw red then you know the next draw must be black.
+However
+\begin{align*}
+\mathbb{P}(Y_{1} = \text{red}) = 1/2\\
+\mathbb{P}(Y_{1} = \text{black}) = 1/2.
+\end{align*}
+which means if you just consider drawing from the urn twice, the second draw has
+a uniform probability of being either the red or the black one. This
+violates the equation \eqref{eq:independence}.
+\subsection{Expectation value}
+\label{sec:org03884d1}
+The final concept is the most intuitive one. In the coin flip example we denoted
+the heads and tails by symbols \(\{H, T\}\). Let's imagine a game where
+everytime you flip heads you gain 1 dollar and everytime you flip tails you lose
+1 dollar. This is equivalent to assigning numbers \(H \to 1\) and \(T \to -1\).
+Let the sequence \(\{Z_{i}\}\) of random variables correspond to the payoff at
+each step \(i\) of this game. The average payoff at any step \(i\) is evidently
+\(0\). Formally this is denoted with the \textbf{expectation value} defined as follows
+\begin{align*}
+\mathbb{E}(Z_{i}) &= \sum_{z \in \{\pm 1\}} z \mathbb{P}(Z_{i} = z)
+\end{align*}
+which is easy to compute:
+\begin{align*}
+\sum_{z \in \{\pm 1\}} z \mathbb{P}(Z_{i} = z)
+                 &= \sum_{z \in \{\pm 1\}} z \rho(z) \\
+                 &= (1)(1/2) + (-1)(1/2) \\
+                 &= 0.
+\end{align*}
+\section{Markov Chains}
+\label{sec:orgde6595a}
+\subsection{Definition}
+\label{sec:orgf689436}
+A Markov chain is a sequence of random variables which is \textbf{memoryless}. In other
+words, for a sequence \(\{X_{i}\}\)
+\begin{align}
+\label{eq:markov}
+\mathbb{P}(X_{j} \mid X_{j-1}, X_{j-2}, \ldots, X_{0}) = \mathbb{P}(X_{j} \mid X_{j-1}).
+\end{align}
+Intuitively, the value of random variable \(X\) at time \(j\) depends only on
+its value at the previous time \(j-1\) and it has no memory of the history
+before that. Equation \eqref{eq:markov} is called the \textbf{Markov property}. Often
+we define the \textbf{Markov transition matrix}
+\begin{align*}
+W(x, y) = \mathbb{P}(X_{j} = x \mid X_{j-1} = y).
+\end{align*}
+
+The essential feature of Markovian systems is the ability to predict
+the future given an initial condition by repeated application of \(W\), i.e.,
+\begin{align}
+\label{eq:propagator}
+\mathbb{P}(X_{n} = x_{n} \mid X_{0} = x_{0}) &= \sum_{\{x_{n-1}, \ldots, x_{1}\}} W(x_{n}, x_{n-1}) \cdots W(x_{1}, x_{0})\mathbb{P}(X_{0} = x_{0}).
+\end{align}
+A derivation is given in \footnote{Bayes' theorem allows the following decomposition of the joint probabilities
+\begin{align*}
+\mathbb{P}(X_{n}, \ldots, X_{0}) &= \sum_{\{x_{n-1}, \ldots, x_{0}\}}\mathbb{P}(X_{n} \mid X_{n-1}= x_{n-1}, \ldots, X_{0} = x_{0}) \mathbb{P}(X_{n-1} = x_{n-1}, \ldots, X_{0} = x_{0})
+\end{align*}
+where the sum is taken over all possible values of the \(\{x_{n-1}, \ldots,
+x_{0}\}\), e.g., if each \(X_{i}\) models a coin flip then
+\begin{align*}
+\sum_{\{x_{n-1}, \ldots, x_{0}\}} = \sum_{x_{n-1} \in \{H, T\}} \cdots \sum_{x_{0} \in \{H,T\}}.
+\end{align*}
+Then,
+\begin{align*}
+\mathbb{P}(X_{n} = x_{n} \mid X_{0} = x_{0}) &= \sum \mathbb{P}(X_{n} = x_{n} \mid X_{n-1} = x_{n-1}, \ldots, X_{0} = x_{0}) \mathbb{P}(X_{n-1} = x_{n-1}, \ldots, X_{0} - x_{0}) \\
+&= \sum \mathbb{P}(X_{n} = x_{n} \mid X_{n-1} = x_{n-1}) \mathbb{P}(X_{n-1} = x_{n-1}, \ldots, X_{0} = x_{0}) \\
+&= \sum W(x_{n}, x_{n-1}) \mathbb{P}(X_{n-1} = x_{n-1}, \ldots, X_{0} = x_{0}) \\
+&= \sum W(x_{n}, x_{n-1}) \cdots W(x_{1}, x_{0})\mathbb{P}(X_{0} = x_{0}) \\
+&= \sum_{x_{0}} W^{n}(x_{n},x_{0}) \mathbb{P}(X_{0} = x_{0})
+\end{align*}}. The above when applied to quantum mechanics is
+actually the celebrated Feynman path integral.
+\subsection{Equilibrium}
+\label{sec:orgc1683af}
+If the values \(x_{i}\) in \eqref{eq:propagator} are taken to assume only
+finitely many values, then we can write the equivalent matrix-vector equation
+\begin{align*}
+P_{t} = W^{t} P_{0}
+\end{align*}
+where \(P_{t}\) is the vector of probabilities at time \(t\), and \(W\) is a
+matrix. The superscript \(t\) represents the repeated multplication of the \(W\).
+
+The \textbf{equilibrium} or \textbf{invariant distribution} of a Markov chain is the
+probability distribution \(P\) which satisfies
+\begin{align}
+\label{eq:eigenvalue}
+P = WP.
+\end{align}
+In linear algebra, this condition \eqref{eq:eigenvalue} is known as an \textbf{eigenvalue equation}. One
+approach to solving the above is to consider the components
+\begin{align*}
+P_{i} = \sum_{j} W_{ij} P_{j}
+\end{align*}
+then using the fact that \(\sum_{j} W_{ji} = 1\) (i.e., the transition matrix
+must conserve probability), this is equivalent to
+\begin{align*}
+\sum_{j} W_{ji} P_{i} = \sum_{j} W_{ij}P_{j}
+\end{align*}
+and one way to solve this is with a vector \(P\) that satisfies, for each component
+\begin{align}
+\label{eq:detailedbalance}
+W_{ji}P_{i} = W_{ij}P_{j}.
+\end{align}
+The condition \eqref{eq:detailedbalance} is called \textbf{detailed balance}. It
+indicates that, at all times, the rate of transitions between states \(i \to j\)
+is exactly balanced by the rate of transitions \(j \to i\). Intuitively, then,
+the probability \(P_{k}\) of being in any state \(k\) must be constant in time.
+\section{Markov Chain Monte Carlo}
+\label{sec:orga6c97fe}
+The essential idea is now immediate to state: to sample from a complex
+probability distribution \(P\), it is often easier to design the transition
+matrix \(W\) of a Markov chain such that \(P\) is its invariant distribution.
+Then, independent simulations of the Markov chain can be done on a computer, and
+given sufficient time one expects that the simulated data obeys \(P\).
+
+Designing a Markov chain is often conceptually simple: for example, to sample
+from a chemical system in equilibrium the transition matrix is given directly by
+the kinetic rates and stochiometry of the reactants. Markov chains for most
+systems also benefit from an \textbf{exponential} convergence rate to equilibrium,
+which means the algorithm is usually quite efficient. \footnote{A notable exception occurs with systems which are at a critical point.
+This is an extremely rich subject, especially in study of the Ising model. It's
+out of scope of our project but I encourage looking it up!}
+
+The algorithm we use is the \textbf{Metropolis-Hastings} algorithm. It is essentially a
+specification of the transition matrix \(W\). There are other choices for \(W\),
+such as the \textbf{Gibbs sampler}, but the basic idea is the same.
+\end{document}
