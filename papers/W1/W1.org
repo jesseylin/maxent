@@ -164,10 +164,11 @@ Then, independent simulations of the Markov chain can be done on a computer, and
 given sufficient time one expects that the simulated data obeys \(P\).
 
 Designing a Markov chain is often conceptually simple: for example, to sample
-from a chemical system in equilibrium the transition matrix is given directly by
-the kinetic rates and stochiometry of the reactants. Markov chains for most
-systems also benefit from an *exponential* convergence rate to equilibrium,
-which means the algorithm is usually quite efficient. [fn:3]
+from a chemical system in equilibrium a transition matrix which satisfies
+detailed balance is given directly by the kinetic rates and stochiometry of the
+reactants. Markov chains for most systems also benefit from an *exponential*
+convergence rate to equilibrium, which means the algorithm is usually quite
+efficient. [fn:3]
 
 The algorithm we use is the *Metropolis-Hastings* algorithm. It is essentially a
 specification of the transition matrix \(W\). There are other choices for \(W\),

@@ -1,4 +1,4 @@
-% Created 2025-02-13 Thu 00:07
+% Created 2025-02-13 Thu 13:56
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -37,14 +37,14 @@
 \tableofcontents
 
 \section{Preliminaries on Probability}
-\label{sec:org8ff29c6}
+\label{sec:org22a565b}
 Probability is extremely unintuitive for humans. Consequently,
 there is a variety of vocabulary and notation which is initially confusing but
 essential to understand. We will illustrate all the preliminaries with the
 example of a fair coin flip (which is formally known as a Bernoulli distributed
 random variable).
 \subsection{Probability distributions}
-\label{sec:org2dad992}
+\label{sec:org6627e45}
 A \textbf{random variable} is typically denoted with a capital letter, and its
 \textbf{realization} is often denoted with the lowercase letter. To model a series of
 coin flips, we consider a sequence of \(N\) random variables
@@ -71,7 +71,7 @@ realizations. For example, if \(z = H\), then the above equation says that the
 probability the random variable \(X_{0}\) has value \(H\) is given by the value
 of the function \(\rho(z)\) at \(z = H\), which is \(1/2\).
 \subsection{Conditional probability and (in)dependence of random variables}
-\label{sec:org982e7e5}
+\label{sec:org275793a}
 In our sequence of coin flips, we have considered the first coin \(X_{0}\). What
 about the \(X_{1}\) variable? Now, we need to introduce the assumption that
 \(X_{1}\) is \textbf{independent} of \(X_{0}\). Intuitively, this means that the
@@ -137,7 +137,7 @@ which means if you just consider drawing from the urn twice, the second draw has
 a uniform probability of being either the red or the black one. This
 violates the equation \eqref{eq:independence}.
 \subsection{Expectation value}
-\label{sec:org03884d1}
+\label{sec:orgcc4878a}
 The final concept is the most intuitive one. In the coin flip example we denoted
 the heads and tails by symbols \(\{H, T\}\). Let's imagine a game where
 everytime you flip heads you gain 1 dollar and everytime you flip tails you lose
@@ -156,9 +156,9 @@ which is easy to compute:
                  &= 0.
 \end{align*}
 \section{Markov Chains}
-\label{sec:orgde6595a}
+\label{sec:orgf129e5f}
 \subsection{Definition}
-\label{sec:orgf689436}
+\label{sec:org71ab151}
 A Markov chain is a sequence of random variables which is \textbf{memoryless}. In other
 words, for a sequence \(\{X_{i}\}\)
 \begin{align}
@@ -198,7 +198,7 @@ Then,
 \end{align*}}. The above when applied to quantum mechanics is
 actually the celebrated Feynman path integral.
 \subsection{Equilibrium}
-\label{sec:orgc1683af}
+\label{sec:org8f32af4}
 If the values \(x_{i}\) in \eqref{eq:propagator} are taken to assume only
 finitely many values, then we can write the equivalent matrix-vector equation
 \begin{align*}
@@ -233,7 +233,7 @@ indicates that, at all times, the rate of transitions between states \(i \to j\)
 is exactly balanced by the rate of transitions \(j \to i\). Intuitively, then,
 the probability \(P_{k}\) of being in any state \(k\) must be constant in time.
 \section{Markov Chain Monte Carlo}
-\label{sec:orga6c97fe}
+\label{sec:org093bac0}
 The essential idea is now immediate to state: to sample from a complex
 probability distribution \(P\), it is often easier to design the transition
 matrix \(W\) of a Markov chain such that \(P\) is its invariant distribution.
@@ -241,10 +241,11 @@ Then, independent simulations of the Markov chain can be done on a computer, and
 given sufficient time one expects that the simulated data obeys \(P\).
 
 Designing a Markov chain is often conceptually simple: for example, to sample
-from a chemical system in equilibrium the transition matrix is given directly by
-the kinetic rates and stochiometry of the reactants. Markov chains for most
-systems also benefit from an \textbf{exponential} convergence rate to equilibrium,
-which means the algorithm is usually quite efficient. \footnote{A notable exception occurs with systems which are at a critical point.
+from a chemical system in equilibrium a transition matrix which satisfies
+detailed balance is given directly by the kinetic rates and stochiometry of the
+reactants. Markov chains for most systems also benefit from an \textbf{exponential}
+convergence rate to equilibrium, which means the algorithm is usually quite
+efficient. \footnote{A notable exception occurs with systems which are at a critical point.
 This is an extremely rich subject, especially in study of the Ising model. It's
 out of scope of our project but I encourage looking it up!}
 
