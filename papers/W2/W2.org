@@ -90,12 +90,16 @@ a globally convex function of \(\theta\)), then this will also be a global minim
 in general it does not fulfill these conditions and we are satisfied if we can
 even find local minima.
 ** Regression on moments is maximum likelihood estimation
-Writing the distribution \eqref{eq:gibbs} as a likelihood function,
+Let's write the distribution \eqref{eq:gibbs} as a likelihood function,
 \begin{align*}
 \rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\}) = Z^{-1}(\{J_{ij}\}, \{h_{k}\})
-e^{-\sum_{ij} J_{ij}s_{i}s_{j} -\sum_{k} h_{k}s_{k}}
+e^{-\sum_{ij} J_{ij}s_{i}s_{j} -\sum_{k} h_{k}s_{k}}.
 \end{align*}
-one can calculate
+This means that we fix some lattice configuration given by \(\{s_{i}\}\), and
+then this function \(\rho\) gives us its probability given some chosen values
+for the parameters \(\{J_{ij}, h_{k}\}\).
+
+Now, one can calculate
 \begin{align*}
 \pdv{\log \rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\})}{J_{ij}} &= \ev{S_{i}S_{j}}_{\rho} - s_{i}s_{j} \\
 \pdv{\log \rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\})}{h_{k}} &= \ev{S_{k}}_{\rho} - s_{k}
@@ -109,7 +113,7 @@ h_{k} \leftarrow h_{k} + \alpha(\ev{S_{k}}_{\rho} - s_{k})
 \end{split}
 \end{align}
 which is equivalent to gradient ascent on the function \(\log \rho\), i.e.,
-maximum likelihood estimation.
+maximum likelihood estimation.[fn:4]
 ** Assignment
 You will create a dataset \(\{\Lambda^{k}\}\) of binary images (it can even be a
 single image). Then, code an algorithm which implements \eqref{eq:mledyn} for
@@ -139,6 +143,7 @@ This produces statistically equivalent results as \eqref{eq:mledyn} assuming all
 \end{itemize}
 
 * Footnotes
+
 [fn:1] Physically we imagine the \(N \times N\) lattice like a matrix, but
 mathematically for convenience we denote it as a vector of length \(N^{2}\). In
 computer science this is sometimes called "flattening" a matrix, and can be
@@ -162,3 +167,12 @@ lattice.
 [fn:3] I prefer writing the summation as over all possible configurations of the
 lattice \(\Lambda\). For the Ising model, which is a 2D lattice of binary spins,
 this is a summation over a Cartesian product \(\Lambda \in \{\pm 1\}^{N^{2}}\).
+
+[fn:4] We are now talking about an algorithm which updates the parameters
+\(\{J_{ij}, h_{k}\}\) as part of a statistical inference procedure. We briefly
+discussed that there is actually there is a physical interpretation: one can
+consider a lattice spin model where the spin variables \(s_{i}\) thermally
+equilibriate on some timescale much shorter than when the interaction or
+"disorder" variables \(J_{ij}\) equilibriate. This can be used to model the
+formation of glass, and was the subject of the 2021 Nobel Prize in Physics won
+by Giorgio Parisi.
