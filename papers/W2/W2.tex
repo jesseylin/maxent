@@ -1,4 +1,4 @@
-% Created 2025-02-14 Fri 11:25
+% Created 2025-02-14 Fri 11:29
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -38,9 +38,9 @@
 \tableofcontents
 
 \section{Bayesian statistics}
-\label{sec:orgf0c7539}
+\label{sec:orgc31e2eb}
 \subsection{The question of Bayesian inference and maximum likelihood estimation}
-\label{sec:orgcdfdeea}
+\label{sec:orgbc8ce79}
 The core question is, given high-dimensional data, i.e., \(\{x_{i}\}\) with each
 \(x_{i} \in \mathbb{R}^{d}\) and \(d\) very large, how does one fit a
 probability distribution \(\rho(\{x_{i}\})\) over the data set which ``respects''
@@ -60,8 +60,8 @@ values which maximize the likelihood, i.e.,
 \theta_{j} = \argmax_{\theta_{j} \in \Theta_{j}} \rho(\{x_{i}\} \mid \{\theta_{j}\}).
 \end{align*}
 \subsection{Maximum entropy inference}
-\label{sec:org490a05e}
-We are using a specific technique for doing maximum likelihood estimatino called
+\label{sec:org282131b}
+We are using a specific technique for doing maximum likelihood estimation called
 \textbf{maximum entropy inference}. Essentially, we posit a maximum entropy assumption
 when defining our model distribution \(\rho\), which otherwise must be
 arbitrarily specified.
@@ -131,7 +131,7 @@ Therefore the condition \eqref{eq:moments} is equivalent to
 \dv{\log Z}{h_{k}} &= \frac{1}{M}\sum_{k=1}^{M} s_{i}^{k}s^{k}_{j}.
 \end{align*}
 \section{Gradient descent and machine learning}
-\label{sec:org63e3a76}
+\label{sec:org1980ee7}
 Essentially all the success of machine learning is based on the fact that the
 gradient descent algorithm is very efficient to compute. Gradient descent
 amounts to defining a cost function \(\mathcal L(\theta)\) over a parameter
@@ -149,7 +149,7 @@ a globally convex function of \(\theta\)), then this will also be a global minim
 in general it does not fulfill these conditions and we are satisfied if we can
 even find local minima.
 \subsection{Regression on moments is maximum likelihood estimation}
-\label{sec:orgb4b2aca}
+\label{sec:orgcb847f5}
 Let's write the distribution \eqref{eq:gibbs} as a likelihood function,
 \begin{align*}
 \rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\}) = Z^{-1}(\{J_{ij}\}, \{h_{k}\})
@@ -161,15 +161,15 @@ for the parameters \(\{J_{ij}, h_{k}\}\).
 
 Now, one can calculate
 \begin{align*}
-\pdv{\log \rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\})}{J_{ij}} &= \ev{S_{i}S_{j}}_{\rho} - s_{i}s_{j} \\
-\pdv{\log \rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\})}{h_{k}} &= \ev{S_{k}}_{\rho} - s_{k}
+-\pdv{\log \rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\})}{J_{ij}} &= \ev{S_{i}S_{j}}_{\rho} - s_{i}s_{j} \\
+-\pdv{\log \rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\})}{h_{k}} &= \ev{S_{k}}_{\rho} - s_{k}
 \end{align*}
 which we saw on the board last time. Therefore, we can implement the following algorithm
 \begin{align}
 \label{eq:mledyn}
 \begin{split}
-J_{ij} \leftarrow J_{ij} + \alpha(\ev{S_{i}S_{j}}_{\rho} - s_{i}s_{j}) \\
-h_{k} \leftarrow h_{k} + \alpha(\ev{S_{k}}_{\rho} - s_{k})
+J_{ij} \leftarrow J_{ij} - \alpha(\ev{S_{i}S_{j}}_{\rho} - s_{i}s_{j}) \\
+h_{k} \leftarrow h_{k} - \alpha(\ev{S_{k}}_{\rho} - s_{k})
 \end{split}
 \end{align}
 which is equivalent to gradient ascent on the function \(\log \rho\), i.e.,
@@ -182,7 +182,7 @@ equilibriate on some timescale much shorter than when the interaction or
 formation of glass, and was the subject of the 2021 Nobel Prize in Physics won
 by Giorgio Parisi.}
 \subsection{Assignment}
-\label{sec:orgf47a59f}
+\label{sec:org9db5d3b}
 You will create a dataset \(\{\Lambda^{k}\}\) of binary images (it can even be a
 single image). Then, code an algorithm which implements \eqref{eq:mledyn} for
 the Ising model, starting from randomly initialized parameters \(\{J_{ij},
@@ -203,8 +203,8 @@ Hints:
 \item Alternatively, you can find your own images from the internet. You may need an image processing library like \url{https://pypi.org/project/pillow/}. Then, one needs to crop and subsample your images down to the resolution \(N \times N\) of the lattice, and also binarize them so they consist of pixels only of brightness value \(0\) or \(1\) (corresponding to the up and down spins of the Ising lattice).
 \item If you are using a dataset with more than a single image, it may be worth implementing the algorithm as follows:
 \begin{align*}
-J_{ij} \leftarrow J_{ij} + \alpha \qty(\ev{S_{i}S_{j}}_{\rho} - \frac{1}{M} \sum_{k} s^{k}_{i}s^{k}_{j}) \\
-h_{k} \leftarrow h_{k} + \alpha \qty(\ev{S_{k}}_{\rho} - \frac{1}{M} \sum_{\ell} s^{\ell}_{k}).
+J_{ij} \leftarrow J_{ij} - \alpha \qty(\ev{S_{i}S_{j}}_{\rho} - \frac{1}{M} \sum_{k} s^{k}_{i}s^{k}_{j}) \\
+h_{k} \leftarrow h_{k} - \alpha \qty(\ev{S_{k}}_{\rho} - \frac{1}{M} \sum_{\ell} s^{\ell}_{k}).
 \end{align*}
 
 This produces statistically equivalent results as \eqref{eq:mledyn} assuming all your data are "independent". As we discussed, it is not always straightforward to determine when real-world data should be considered independent from each other. Note that playing around with the value of the step size \(\alpha\) may be needed for best results.
