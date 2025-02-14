@@ -1,4 +1,4 @@
-% Created 2025-02-13 Thu 14:11
+% Created 2025-02-14 Fri 11:25
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -38,9 +38,9 @@
 \tableofcontents
 
 \section{Bayesian statistics}
-\label{sec:org77f8e12}
+\label{sec:orgf0c7539}
 \subsection{The question of Bayesian inference and maximum likelihood estimation}
-\label{sec:org988c791}
+\label{sec:orgcdfdeea}
 The core question is, given high-dimensional data, i.e., \(\{x_{i}\}\) with each
 \(x_{i} \in \mathbb{R}^{d}\) and \(d\) very large, how does one fit a
 probability distribution \(\rho(\{x_{i}\})\) over the data set which ``respects''
@@ -60,7 +60,7 @@ values which maximize the likelihood, i.e.,
 \theta_{j} = \argmax_{\theta_{j} \in \Theta_{j}} \rho(\{x_{i}\} \mid \{\theta_{j}\}).
 \end{align*}
 \subsection{Maximum entropy inference}
-\label{sec:orgf4790d2}
+\label{sec:org490a05e}
 We are using a specific technique for doing maximum likelihood estimatino called
 \textbf{maximum entropy inference}. Essentially, we posit a maximum entropy assumption
 when defining our model distribution \(\rho\), which otherwise must be
@@ -131,7 +131,7 @@ Therefore the condition \eqref{eq:moments} is equivalent to
 \dv{\log Z}{h_{k}} &= \frac{1}{M}\sum_{k=1}^{M} s_{i}^{k}s^{k}_{j}.
 \end{align*}
 \section{Gradient descent and machine learning}
-\label{sec:org16cc704}
+\label{sec:org63e3a76}
 Essentially all the success of machine learning is based on the fact that the
 gradient descent algorithm is very efficient to compute. Gradient descent
 amounts to defining a cost function \(\mathcal L(\theta)\) over a parameter
@@ -149,7 +149,7 @@ a globally convex function of \(\theta\)), then this will also be a global minim
 in general it does not fulfill these conditions and we are satisfied if we can
 even find local minima.
 \subsection{Regression on moments is maximum likelihood estimation}
-\label{sec:org548d8a3}
+\label{sec:orgb4b2aca}
 Let's write the distribution \eqref{eq:gibbs} as a likelihood function,
 \begin{align*}
 \rho(\{s_{i}\} \mid \{J_{ij}\}, \{h_{k}\}) = Z^{-1}(\{J_{ij}\}, \{h_{k}\})
@@ -182,7 +182,7 @@ equilibriate on some timescale much shorter than when the interaction or
 formation of glass, and was the subject of the 2021 Nobel Prize in Physics won
 by Giorgio Parisi.}
 \subsection{Assignment}
-\label{sec:org77d62bb}
+\label{sec:orgf47a59f}
 You will create a dataset \(\{\Lambda^{k}\}\) of binary images (it can even be a
 single image). Then, code an algorithm which implements \eqref{eq:mledyn} for
 the Ising model, starting from randomly initialized parameters \(\{J_{ij},
@@ -190,7 +190,7 @@ h_{k}\}\).
 
 Recall, for the Ising model that \(J_{ij}\) is zero unless
 sites \(i\) and \(j\) are adjacent on the lattice, and if so then \(J_{ij}\)
-equals a single constant \(\frac{J}{N}\). The code we are using does not have the term
+equals a single constant \(J\). The code we are using does not have the term
 that depends on \(h_{k}\). You should add it into the code, with the same
 assumption that \(h_{k}\) is uniform across the lattice with
 \(h_{k} = \frac{h}{N^{2}}\). (Note: if you work out the sums in

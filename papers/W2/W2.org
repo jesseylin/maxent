@@ -122,7 +122,7 @@ h_{k}\}\).
 
 Recall, for the Ising model that \(J_{ij}\) is zero unless
 sites \(i\) and \(j\) are adjacent on the lattice, and if so then \(J_{ij}\)
-equals a single constant \(\frac{J}{N}\). The code we are using does not have the term
+equals a single constant \(J\). The code we are using does not have the term
 that depends on \(h_{k}\). You should add it into the code, with the same
 assumption that \(h_{k}\) is uniform across the lattice with
 \(h_{k} = \frac{h}{N^{2}} \). (Note: if you work out the sums in
